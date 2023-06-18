@@ -7,4 +7,6 @@ public interface ITodoRepository
     Task<IEnumerable<TodoItem>> List();
     
     Task<Guid> Create(TodoItem newItem);
+
+    Task<bool> UpdateAsync(TodoItem updatedItem);
 }
