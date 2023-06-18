@@ -77,7 +77,7 @@ namespace Todo.Tests
             var controller = new TodoController(mockSender.Object);
 
             // Act
-            var result = await controller.List() as OkObjectResult;
+            var result = await controller.List(DataSort.Ascending, ItemsVisibility.Show_All) as OkObjectResult;
             var items = result.Value as IEnumerable<TodoItem>;
 
             // Assert

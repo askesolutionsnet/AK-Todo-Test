@@ -15,9 +15,9 @@ public class TodoController : ControllerBase
     }
 
     [HttpGet("list")]
-    public async Task<IActionResult> List() =>
-        Ok(await _sender.Send(new ListTodoItemsRequest()));
-    
+    public async Task<IActionResult> List(DataSort sort, ItemsVisibility items) => Ok(await _sender.Send(new ListTodoItemsRequest(sort, items)));
+
+
     [HttpPost("create")]
     public async Task<IActionResult> Get([FromBody] CreateTodoItemRequest request) =>
         Ok(await _sender.Send(request));

@@ -28,5 +28,19 @@ namespace Todo.Tests
                 Completed = null
             };
         }
+
+        public static IEnumerable<TodoItem> GetTestTodoItems()
+        {
+            var items = new List<TodoItem>
+            {
+                new TodoItem { Id = Guid.NewGuid(), Text = "Task 1", Completed = null, Created = DateTime.UtcNow },
+                new TodoItem { Id = Guid.NewGuid(), Text = "Task 2", Completed = DateTime.UtcNow, Created = DateTime.UtcNow.AddDays(-1) },
+                new TodoItem { Id = Guid.NewGuid(), Text = "Task 3", Completed = DateTime.UtcNow, Created = DateTime.UtcNow.AddHours(-2) },
+                new TodoItem { Id = Guid.NewGuid(), Text = "Task 4", Completed = null, Created = DateTime.UtcNow.AddDays(-3) },
+                new TodoItem { Id = Guid.NewGuid(), Text = "Task 5", Completed = DateTime.UtcNow, Created = DateTime.UtcNow.AddMinutes(-30) }
+            };
+
+            return items;
+        }
     }
 }
