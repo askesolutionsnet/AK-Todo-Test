@@ -19,8 +19,21 @@ public class TodoController : ControllerBase
 
 
     [HttpPost("create")]
-    public async Task<IActionResult> Get([FromBody] CreateTodoItemRequest request) =>
-        Ok(await _sender.Send(request));
+    public async Task<IActionResult> Get([FromBody] CreateTodoItemRequest request)
+    {
+        if (request == null)
+            return BadRequest();
+
+        if (string.IsNullOrWhiteSpace(request.Text))
+            return BadRequest("Text is Empty");
+
+        var response = await _sender.Send(request);
+        if (response.Equals(Guid.Empty))
+        {
+            return BadRequest();
+        }
+        return Ok(response);
+    }
 
 
     [HttpPost("markCompleted")]

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Todo.Data.Models;
 using Todo.Data;
+using Todo.Api.Handlers;
 
 namespace Todo.Tests
 {
@@ -41,6 +42,11 @@ namespace Todo.Tests
             };
 
             return items;
+        }
+
+        private static bool MatchRequestTextToUpper(CreateTodoItemRequest request)
+        {
+            return request != null && request.Text == request.Text?.ToUpper();
         }
     }
 }
