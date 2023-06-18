@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Todo.Api.Controllers;
@@ -101,6 +102,27 @@ namespace Todo.Tests
             Assert.AreNotEqual(Guid.Empty, okResult.Value);
 
             Assert.AreEqual("LOWERCASE TEXT", capturedRequest.Text);
+        }
+
+        [TestMethod]
+        public async Task Create_Should_Return_InternalServerError_When_Exception_Is_Caught()
+        {
+            // Arrange
+            var request = new CreateTodoItemRequest("TextItem");
+
+            mockSender
+                .Setup(sender => sender.Send(It.IsAny<CreateTodoItemRequest>(), It.IsAny<CancellationToken>()))
+                .ThrowsAsync(new Exception("Something went wrong"));
+
+            // Act
+            var result = await controller.Get(request);
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.IsInstanceOfType(result, typeof(ObjectResult));
+
+            var statusCodeResult = (ObjectResult)result;
+            Assert.AreEqual(StatusCodes.Status500InternalServerError, statusCodeResult.StatusCode);
         }
 
     }

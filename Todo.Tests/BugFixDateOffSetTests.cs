@@ -12,6 +12,16 @@ namespace Todo.Tests
     public class BugFixDateOffSetTests
     {
 
+        private Mock<ISender> mockSender;
+        private TodoController controller;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            mockSender = new Mock<ISender>();
+            controller = new TodoController(mockSender.Object);
+        }
+
 
         [TestMethod]
         public async Task Create_Should_Set_Created_In_UTC()
@@ -69,7 +79,6 @@ namespace Todo.Tests
                 new TodoItem { Id = Guid.NewGuid(), Created = DateTime.UtcNow, Text = "Item 2", Completed = null }
             };
 
-            var mockSender = new Mock<ISender>();
             mockSender
                 .Setup(sender => sender.Send(It.IsAny<ListTodoItemsRequest>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(todoItems);

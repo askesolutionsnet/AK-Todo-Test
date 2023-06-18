@@ -12,15 +12,25 @@ namespace Todo.Tests
     [TestClass]
     public class TodoAPIShowHideCompletedAndSortedItemsTests
     {
+        private Mock<ISender> mockSender;
+        private TodoController controller;
+        private IEnumerable<TodoItem> allItems;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            mockSender = new Mock<ISender>();
+            controller = new TodoController(mockSender.Object);
+            allItems = UseCommonForTests.GetTestTodoItems();
+        }
+
         [TestMethod]
         public async Task List_Should_Return_AllItems_When_VisibilityIsShowAll()
         {
             // Arrange
-            var mockSender = new Mock<ISender>();
-            var expectedItems = UseCommonForTests.GetTestTodoItems();
-            mockSender
+              mockSender
                 .Setup(sender => sender.Send(It.IsAny<ListTodoItemsRequest>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(expectedItems);
+                .ReturnsAsync(allItems);
 
             var controller = new TodoController(mockSender.Object);
 
@@ -32,15 +42,13 @@ namespace Todo.Tests
             Assert.IsNotNull(result);
             Assert.AreEqual(200, result.StatusCode);
             Assert.IsNotNull(resultList);
-            Assert.AreEqual(expectedItems.Count(), resultList.Count());
+            Assert.AreEqual(allItems.Count(), resultList.Count());
         }
 
         [TestMethod]
         public async Task List_Should_Return_CompletedItems_When_VisibilityIsShowCompleted()
         {
             // Arrange
-            var mockSender = new Mock<ISender>();
-            var allItems = UseCommonForTests.GetTestTodoItems();
             var expectedItems = allItems.Where(x => x.Completed.HasValue).ToList();
             mockSender
                 .Setup(sender => sender.Send(It.IsAny<ListTodoItemsRequest>(), It.IsAny<CancellationToken>()))
@@ -64,8 +72,6 @@ namespace Todo.Tests
         public async Task List_Should_Return_NonCompletedItems_When_VisibilityIsHideCompleted()
         {
             // Arrange
-            var mockSender = new Mock<ISender>();
-            var allItems = UseCommonForTests.GetTestTodoItems();
             var expectedItems = allItems.Where(x => !x.Completed.HasValue).ToList();
             mockSender
                 .Setup(sender => sender.Send(It.IsAny<ListTodoItemsRequest>(), It.IsAny<CancellationToken>()))
@@ -89,11 +95,9 @@ namespace Todo.Tests
         public async Task List_Should_Return_Items_SortedInAscendingOrder()
         {
             // Arrange
-            var mockSender = new Mock<ISender>();
-            var expectedItems = UseCommonForTests.GetTestTodoItems();
             mockSender
                 .Setup(sender => sender.Send(It.IsAny<ListTodoItemsRequest>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(expectedItems);
+                .ReturnsAsync(allItems);
 
             var controller = new TodoController(mockSender.Object);
 
@@ -106,7 +110,7 @@ namespace Todo.Tests
             Assert.AreEqual(200, result.StatusCode);
             Assert.IsNotNull(resultList);
 
-            var sortedItems = expectedItems.OrderBy(x => x.Created);
+            var sortedItems = allItems.OrderBy(x => x.Created);
             CollectionAssert.AreEqual(sortedItems.ToList(), resultList.OrderBy(x => x.Created).ToList());
         }
 
@@ -114,11 +118,9 @@ namespace Todo.Tests
         public async Task List_Should_Return_Items_SortedInDescendingOrder()
         {
             // Arrange
-            var mockSender = new Mock<ISender>();
-            var expectedItems = UseCommonForTests.GetTestTodoItems();
             mockSender
                 .Setup(sender => sender.Send(It.IsAny<ListTodoItemsRequest>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(expectedItems);
+                .ReturnsAsync(allItems);
 
             var controller = new TodoController(mockSender.Object);
 
@@ -131,7 +133,7 @@ namespace Todo.Tests
             Assert.AreEqual(200, result.StatusCode);
             Assert.IsNotNull(resultList);
 
-            var sortedItems = expectedItems.OrderByDescending(x => x.Created);
+            var sortedItems = allItems.OrderByDescending(x => x.Created);
             CollectionAssert.AreEqual(sortedItems.ToList(), resultList.OrderByDescending(x => x.Created).ToList());
         }
 
