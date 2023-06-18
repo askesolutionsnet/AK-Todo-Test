@@ -65,6 +65,7 @@ public class TodoController : ControllerBase
     [HttpPost("markCompleted")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> MarkCompleted([FromBody] UpdateTodoItemRequest request)
     {
@@ -80,7 +81,7 @@ public class TodoController : ControllerBase
             var response = await _sender.Send(request);
 
             if (!response)
-                return BadRequest();
+                return NotFound("Item Id is Not Found");
 
             return Ok(response);
         }

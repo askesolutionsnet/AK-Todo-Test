@@ -44,7 +44,7 @@ namespace Todo.Tests
         }
 
         [TestMethod]
-        public async Task MarkCompleted_Should_Return_BadRequest_When_ItemNotFound()
+        public async Task MarkCompleted_Should_Return_NotFound_When_ItemNotFound()
         {
             // Arrange
             mockSender
@@ -54,11 +54,13 @@ namespace Todo.Tests
             var controller = new TodoController(mockSender.Object);
 
             // Act
-            var result = await controller.MarkCompleted(new UpdateTodoItemRequest(itemId.ToString())) as BadRequestResult;
+            var result = await controller.MarkCompleted(new UpdateTodoItemRequest(itemId.ToString())) as NotFoundObjectResult;
+            var NotFoundResult = (NotFoundObjectResult)result;
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(400, result.StatusCode);
+            Assert.AreEqual(404, result.StatusCode);
+            Assert.AreEqual("Item Id is Not Found", NotFoundResult.Value);
         }
 
         [TestMethod]
